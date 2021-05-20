@@ -1,0 +1,34 @@
+
+
+<MainLayout>
+    BoxLayout:
+        orientation: 'vertical'
+        Button:
+            text: 'Wyszukaj utwór'
+            font_size: 14
+        Button:
+            text: 'Biblioteka'
+            font_size: 14
+    BoxLayout:
+        orientation: 'vertical'
+        BoxLayout:
+            orientation: 'vertical'
+            TextInput:
+        BoxLayout:
+            orientation: 'horizontal'
+            Button:
+                text: 'Poprzedni'
+                font_size: 14
+            Button:
+                text: 'Play'
+                font_size: 14
+                on_press: root.playSong(self)
+            Button:
+                text: 'Pause'
+                font_size: 14
+                on_press: root.pauseSong(self)
+            Button:
+                text: 'Nastepny'
+                font_size: 14
+
+
