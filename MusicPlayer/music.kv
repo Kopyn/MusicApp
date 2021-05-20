@@ -1,20 +1,57 @@
 
 
 <MainLayout>
-    BoxLayout:
-        orientation: 'vertical'
+    #navigation panel
+    StackLayout:
+        size_hint: (.2, .2)
         Button:
             text: 'Wyszukaj utwór'
+            size_hint: (1, .04)
+            center_x: 1
             font_size: 14
         Button:
             text: 'Biblioteka'
+            size_hint: (1, .04)
+            center_x: 1
             font_size: 14
-    BoxLayout:
-        orientation: 'vertical'
+    #main panel
+    StackLayout:
+        #search panel
+        StackLayout:
+            canvas.before:
+                Color:
+                    rgba: 180/255, 180/255, 180/255, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            size_hint: (1, .8)
+            GridLayout:
+                rows: 1
+                cols: 2
+                canvas.before:
+                    Color:
+                        rgba: 180/255, 180/255, 180/255, 1
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+                size_hint: (1, .1)
+                TextInput:
+                    size: (.7, .1)
+                    size_hint: (.7, .1)
+                    font_size: 24
+                    top: 1
+                    pos_hint_y: root.y
+                Button:
+                    top: 1
+                    pos_hint_y: root.y
+                    text: 'Szukaj'
+                    size_hint: (.3, .1)
+                    size: (.3, .1)
+                    center_x: 1
+                    font_size: 14
+        #player panel
         BoxLayout:
-            orientation: 'vertical'
-            TextInput:
-        BoxLayout:
+            size_hint: (1, .2)
             orientation: 'horizontal'
             Button:
                 text: 'Poprzedni'
