@@ -3,6 +3,7 @@
 <MainLayout>
     #navigation panel
     StackLayout:
+        id: navigation_panel
         size_hint: (.2, .2)
         Button:
             text: 'Wyszukaj utwór'
@@ -16,39 +17,43 @@
             font_size: 14
     #main panel
     StackLayout:
-        #search panel
-        StackLayout:
+        #search TextBox
+        GridLayout:
+            rows: 1
+            cols: 2
             canvas.before:
                 Color:
                     rgba: 180/255, 180/255, 180/255, 1
                 Rectangle:
                     pos: self.pos
                     size: self.size
-            size_hint: (1, .8)
-            GridLayout:
-                rows: 1
-                cols: 2
-                canvas.before:
-                    Color:
-                        rgba: 180/255, 180/255, 180/255, 1
-                    Rectangle:
-                        pos: self.pos
-                        size: self.size
-                size_hint: (1, .1)
-                TextInput:
-                    size: (.7, .1)
-                    size_hint: (.7, .1)
-                    font_size: 24
-                    top: 1
-                    pos_hint_y: root.y
-                Button:
-                    top: 1
-                    pos_hint_y: root.y
-                    text: 'Szukaj'
-                    size_hint: (.3, .1)
-                    size: (.3, .1)
-                    center_x: 1
-                    font_size: 14
+            size_hint: (1, .1)
+            TextInput:
+                id: search_box
+                size: (.7, .1)
+                size_hint: (.7, .1)
+                font_size: 24
+                top: 1
+                pos_hint_y: root.y
+            Button:
+                top: 1
+                pos_hint_y: root.y
+                text: 'Szukaj'
+                size_hint: (.3, .1)
+                size: (.3, .1)
+                center_x: 1
+                font_size: 14
+                on_press: root.searchSong()
+        #results panel
+        StackLayout:
+            id: results
+            canvas.before:
+                Color:
+                    rgba: 180/255, 180/255, 180/255, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            size_hint: (1, .7)
         #player panel
         BoxLayout:
             size_hint: (1, .2)
@@ -59,11 +64,11 @@
             Button:
                 text: 'Play'
                 font_size: 14
-                on_press: root.playSong(self)
+                on_press: root.playSong()
             Button:
                 text: 'Pause'
                 font_size: 14
-                on_press: root.pauseSong(self)
+                on_press: root.pauseSong()
             Button:
                 text: 'Nastepny'
                 font_size: 14

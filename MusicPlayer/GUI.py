@@ -10,8 +10,8 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.image import Image, AsyncImage
 import random
 import Test
+import YoutubeAPI
 
-#wimg = Image(source='mylogo.png')
 
 class VideoItem(BoxLayout):
     def __init__(self, imageSource, title, videoID):
@@ -30,7 +30,8 @@ class VideoItem(BoxLayout):
         self.add_widget(ttl)
 
     def playSong(self, instance):
-        Test.playSong()
+        #Test.actualSong = "https://www.youtube.com/watch?v=" + self.id;
+        Test.playSong("https://www.youtube.com/watch?v=" + self.id)
 
 class MainLayout(GridLayout):
 
@@ -44,30 +45,23 @@ class MainLayout(GridLayout):
     def pauseSong(self):
         Test.pauseSong()
 
-    def viewSongs(self, listOfImages):
-        pass
-
     def searchSong(self):
         print(self.ids.search_box.text)
+
+        YoutubeAPI.searchQuery = self.ids.search_box.text
+
+        videoResultsData = YoutubeAPI.getSongs()
 
         self.ids.results.clear_widgets()
         self.l = GridLayout()
         self.l.cols = 1
-        if random.randint(1, 20) >= 2:
-            self.l.add_widget(VideoItem('https://i.ytimg.com/vi/HdWw9SksiwQ/hqdefault.jpg',
-                                        'https://i.ytimg.com/vi/HdWw9SksiwQ/hqdefault.jpg', 1))
-            self.l.add_widget(VideoItem('https://i.ytimg.com/vi/HdWw9SksiwQ/hqdefault.jpg',
-                                        'https://i.ytimg.com/vi/HdWw9SksiwQ/hqdefault.jpg', 1))
-            self.l.add_widget(VideoItem('https://i.ytimg.com/vi/HdWw9SksiwQ/hqdefault.jpg',
-                                        'https://i.ytimg.com/vi/HdWw9SksiwQ/hqdefault.jpg', 1))
-        else:
-            self.l.add_widget(AsyncImage(source='https://i.ytimg.com/vi/HdWw9SksiwQ/hqdefault.jpg'))
-            self.l.add_widget(Label(text='hello'))
-            self.l.add_widget(Button(text='OK'))
-            self.l.add_widget(AsyncImage(source='https://i.ytimg.com/vi/WEQnzs8wl6E/hqdefault.jpg'))
-            self.l.add_widget(Label(text='hello'))
-            self.l.add_widget(Button(text='OK'))
-            print("ayy")
+
+        i = 0
+        while i < len(videoResultsData) - 3:
+            self.l.add_widget(VideoItem(videoResultsData[i], videoResultsData[i+1], videoResultsData[i+2]))
+            i += 3
+
+        #view results
         self.ids.results.add_widget(self.l)
 
 
