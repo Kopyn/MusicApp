@@ -20,6 +20,7 @@ def getSongs():
             #adding video id
             returnedList.append(items[i]["id"]["videoId"])
             i += 1
+        print(len(returnedList))
         return returnedList
     else:
         return None
