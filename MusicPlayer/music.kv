@@ -1,122 +1,247 @@
 
-
 <MainLayout>
-    #navigation panel
-    size: (1200, 100)
-    StackLayout:
-        id: navigation_panel
-        size_hint: (.2, .2)
-        canvas.before:
-            Color:
-                rgba: 180/255, 180/255, 180/255, 0.15
-            Rectangle:
-                pos: self.pos
-                size: self.size
-        Button:
-            text: 'Wyszukaj'
-            size_hint: (1, .04)
-            center_x: 1
-            font_size: 14
-        Button:
-            spacing: 10
-            text: 'Biblioteka'
-            size_hint: (1, .04)
-            center_x: 1
-            font_size: 14
-        Label:
-            size_hint: (1, .72)
-        AnchorLayout:
-            id: now_playing
-            anchor_x: 'center'
-            anchor_y: 'bottom'
-            size_hint: (1, .2)
-    #main panel
-    StackLayout:
-        #seach panel
-        GridLayout:
-            rows: 1
-            cols: 2
-            size_hint: (1, .1)
-            #search TextBox
-            TextInput:
-                id: search_box
-                background_color: 180/255, 180/255, 180/255, 0.3
-                size: (.7, .1)
-                size_hint: (.7, .1)
-                font_size: 24
-                top: 1
-                pos_hint_y: root.y
-                multiline: False
-                hint_text: 'Wyszukaj'
-                cursor_color: 1, 1, 1, 1
-                foreground_color: 1, 1, 1, 1
-                on_text_validate: root.searchSong()
+    GridLayout:
+        cols: 2
+        rows: 1
+        #navigation panel
+        size: (1200, 100)
+        StackLayout:
+            id: navigation_panel
+            size_hint: (.2, .2)
+            canvas.before:
+                Color:
+                    rgba: 180/255, 180/255, 180/255, 0.15
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
             Button:
-                top: 1
-                pos_hint_y: root.y
-                text: 'Szukaj'
-                size_hint: (.3, .1)
-                size: (.3, .1)
+                text: 'Wyszukaj'
+                size_hint: (1, .04)
                 center_x: 1
                 font_size: 14
-                on_press: root.searchSong()
-        #results panel
+            Button:
+                spacing: 10
+                text: 'Biblioteka'
+                size_hint: (1, .04)
+                center_x: 1
+                font_size: 14
+                on_press: root.manager.current = 'LibraryScreen'
+            Label:
+                size_hint: (1, .72)
+            AnchorLayout:
+                id: now_playing
+                anchor_x: 'center'
+                anchor_y: 'bottom'
+                size_hint: (1, .2)
+        #main panel
         StackLayout:
-            id: results
-            canvas.before:
-                Color:
-                    rgba: 0, 0, 0, 0.9
-                Rectangle:
-                    pos: self.pos
-                    size: self.size
-            size_hint: (1, .7)
-        #player panel
-        BoxLayout:
-            size_hint: (1, .2)
-            orientation: 'horizontal'
-            canvas.before:
-                Color:
-                    rgba: 64/255, 62/255, 58/255, 0.9
-                Rectangle:
-                    pos: self.pos
-                    size: self.size
+            #seach panel
+            GridLayout:
+                rows: 1
+                cols: 2
+                size_hint: (1, .1)
+                #search TextBox
+                TextInput:
+                    id: search_box
+                    background_color: 180/255, 180/255, 180/255, 0.3
+                    size: (.7, .1)
+                    size_hint: (.7, .1)
+                    font_size: 24
+                    top: 1
+                    pos_hint_y: root.y
+                    multiline: False
+                    hint_text: 'Wyszukaj'
+                    cursor_color: 1, 1, 1, 1
+                    foreground_color: 1, 1, 1, 1
+                    on_text_validate: root.searchSong()
+                Button:
+                    top: 1
+                    pos_hint_y: root.y
+                    text: 'Szukaj'
+                    size_hint: (.3, .1)
+                    size: (.3, .1)
+                    center_x: 1
+                    font_size: 14
+                    on_press: root.searchSong()
+            #results panel
             StackLayout:
-                size_hint: (.8, 1)
-                BoxLayout:
-                    size_hint: (1, .5)
-                    Button:
-                        text: 'Poprzedni'
-                        font_size: 14
-                    Button:
-                        text: 'Play'
-                        font_size: 14
-                        on_press: root.playSong()
-                    Button:
-                        text: 'Pause'
-                        font_size: 14
-                        on_press: root.pauseSong()
-                    Button:
-                        text: 'Nastepny'
-                        font_size: 14
-                ProgressBar:
-                    id: playback_control
-                    foreground_color: 1, 0, 0, 1
+                id: results
+                canvas.before:
+                    Color:
+                        rgba: 0, 0, 0, 0.9
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+                size_hint: (1, .7)
+            #player panel
+            BoxLayout:
+                size_hint: (1, .2)
+                orientation: 'horizontal'
+                canvas.before:
+                    Color:
+                        rgba: 64/255, 62/255, 58/255, 0.9
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+                StackLayout:
+                    size_hint: (.8, 1)
+                    BoxLayout:
+                        size_hint: (1, .5)
+                        Button:
+                            text: 'Poprzedni'
+                            font_size: 14
+                        Button:
+                            text: 'Play'
+                            font_size: 14
+                            on_press: root.playSong()
+                        Button:
+                            text: 'Pause'
+                            font_size: 14
+                            on_press: root.pauseSong()
+                        Button:
+                            text: 'Nastepny'
+                            font_size: 14
+                    ProgressBar:
+                        id: playback_control
+                        foreground_color: 1, 0, 0, 1
+                        min: 0
+                        value: 1
+                        max: 10000
+                        orientation: 'horizontal'
+                        size_hint: (1, .5)
+                Slider:
+                    id: volume_control
                     min: 0
-                    value: 1
-                    max: 10000
-                    orientation: 'horizontal'
-                    size_hint: (1, .5)
-            Slider:
-                id: volume_control
-                min: 0
-                max: 100
-                value: 50
-                value_track: True
-                value_track_color: 1, 0, 0, 1
-                cursor_size: 10, 10
+                    max: 100
+                    value: 50
+                    value_track: True
+                    value_track_color: 1, 0, 0, 1
+                    cursor_size: 10, 10
 
-                step: 1
-                orientation: 'vertical'
-                size_hint: (.1, 1)
+                    step: 1
+                    orientation: 'vertical'
+                    size_hint: (.1, 1)
 
+<LibraryScreen>
+    GridLayout:
+        cols: 2
+        rows: 1
+        #navigation panel
+        size: (1200, 100)
+        StackLayout:
+            id: navigation_panel
+            size_hint: (.2, .2)
+            canvas.before:
+                Color:
+                    rgba: 180/255, 180/255, 180/255, 0.15
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            Button:
+                text: 'Wyszukaj'
+                size_hint: (1, .04)
+                center_x: 1
+                font_size: 14
+                on_press: root.manager.current = 'MainLayout'
+            Button:
+                spacing: 10
+                text: 'Biblioteka'
+                size_hint: (1, .04)
+                center_x: 1
+                font_size: 14
+            Label:
+                size_hint: (1, .72)
+            AnchorLayout:
+                id: now_playing
+                anchor_x: 'center'
+                anchor_y: 'bottom'
+                size_hint: (1, .2)
+        #main panel
+        StackLayout:
+            #create playlist panel
+            GridLayout:
+                rows: 1
+                cols: 2
+                size_hint: (1, .1)
+                #playlist name TextBox
+                TextInput:
+                    id: playlist_name_box
+                    background_color: 180/255, 180/255, 180/255, 0.3
+                    size: (.7, .1)
+                    size_hint: (.7, .1)
+                    font_size: 24
+                    top: 1
+                    pos_hint_y: root.y
+                    multiline: False
+                    hint_text: 'Wpisz nazwę playlisty'
+                    cursor_color: 1, 1, 1, 1
+                    foreground_color: 1, 1, 1, 1
+                    #on_text_validate: root.searchSong()
+                Button:
+                    top: 1
+                    pos_hint_y: root.y
+                    text: 'Dodaj'
+                    size_hint: (.3, .1)
+                    size: (.3, .1)
+                    center_x: 1
+                    font_size: 14
+                    #on_press: root.searchSong()
+            #playlists panel
+            GridLayout:
+                id: playlists
+                cols: 4
+                canvas.before:
+                    Color:
+                        rgba: 0, 0, 0, 0.9
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+                size_hint: (1, .7)
+            #player panel
+            BoxLayout:
+                size_hint: (1, .2)
+                orientation: 'horizontal'
+                canvas.before:
+                    Color:
+                        rgba: 64/255, 62/255, 58/255, 0.9
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+                StackLayout:
+                    size_hint: (.8, 1)
+                    BoxLayout:
+                        size_hint: (1, .5)
+                        Button:
+                            text: 'Poprzedni'
+                            font_size: 14
+                        Button:
+                            text: 'Play'
+                            font_size: 14
+                            on_press: root.playSong()
+                        Button:
+                            text: 'Pause'
+                            font_size: 14
+                            on_press: root.pauseSong()
+                        Button:
+                            text: 'Nastepny'
+                            font_size: 14
+                    ProgressBar:
+                        id: playback_control
+                        foreground_color: 1, 0, 0, 1
+                        min: 0
+                        value: 1
+                        max: 10000
+                        orientation: 'horizontal'
+                        size_hint: (1, .5)
+                Slider:
+                    id: volume_control
+                    min: 0
+                    max: 100
+                    value: 50
+                    value_track: True
+                    value_track_color: 1, 0, 0, 1
+                    cursor_size: 10, 10
 
+                    step: 1
+                    orientation: 'vertical'
+                    size_hint: (.1, 1)

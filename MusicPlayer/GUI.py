@@ -1,21 +1,20 @@
 from kivy.app import App
 from kivy.uix.anchorlayout import AnchorLayout
-from kivy.uix.stacklayout import StackLayout
-from kivy.uix.widget import Widget
 from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.textinput import TextInput
 from kivy.uix.image import Image, AsyncImage
 from kivy.core.window import Window
 import threading
-import sched, time
-from kivy.uix.slider import Slider
-import Test
+import time
+from PlaylistManager import *
 import YoutubeAPI
 from AudioPlayer import *
+from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
 
+
+playlistManager = PlaylistManager()
 audioPlayer = AudioPlayer()
 isPlaying = False
 
@@ -55,7 +54,7 @@ class VideoItem(BoxLayout):
         isPlaying = True
 
 
-class MainLayout(GridLayout):
+class MainLayout(Screen):
     actualSongImage = ""
     firstSong = True
 
@@ -63,6 +62,7 @@ class MainLayout(GridLayout):
         super(MainLayout, self).__init__(**kwargs)
         self.rows = 1
         self.killThread = False
+        playlistManager.addPlaylist("Test")
         self.t = threading.Thread(target = self.timeUpdate)
         self.t.start()
         self.actualSongImage = ""
@@ -71,20 +71,32 @@ class MainLayout(GridLayout):
         self.ids.playback_control.value = 1
 
     def timeUpdate(self):
-        while MainLayout.firstSong:
-            print("?")
-            pass
+        if not self.killThread:
+            while MainLayout.firstSong:
+                time.sleep(0.5)
+                print("hey")
+                if self.killThread:
+                    break
+        self.pauseSong()
+        print("qwer")
+        time.sleep(0.5)
+        self.playSong()
         while True:
             if not self.killThread:
                 time.sleep(1)
                 if(MainLayout.actualSongImage != self.actualSongImage):
                     self.ids.now_playing.clear_widgets()
+                    self.manager.get_screen('LibraryScreen').ids.now_playing.clear_widgets()
                     self.ids.now_playing.add_widget(AsyncImage(source=MainLayout.actualSongImage))
+                    self.manager.get_screen('LibraryScreen').ids.now_playing.add_widget(AsyncImage(source=MainLayout.actualSongImage))
                 if int(audioPlayer.getTime()) > 0:
                     self.updateProgress(audioPlayer.getTime())
+                    self.manager.get_screen('LibraryScreen').ids.playback_control.value = audioPlayer.getTime()
                 self.ids.now_playing.add_widget(AsyncImage(source=MainLayout.actualSongImage))
+                self.manager.get_screen('LibraryScreen').ids.now_playing.add_widget(AsyncImage(source=MainLayout.actualSongImage))
             else:
                 break
+        print("end of loop main layout")
 
     def updateProgress(self, value):
         self.ids.playback_control.value = value
@@ -94,11 +106,11 @@ class MainLayout(GridLayout):
             print("thread not killed")
             print(self.killThread)
             self.ids.playback_control.max = audioPlayer.getLength()
+
         else:
             self.ids.playback_control.max = audioPlayer.getLength()
-            self.t = threading.Thread(target=self.timeUpdate)
-            self.t.start()
             print("hey")
+        self.manager.get_screen('LibraryScreen').ids.playback_control.max = audioPlayer.getLength()
         self.ids.playback_control.max = audioPlayer.getLength()
         audioPlayer.playSong(audioPlayer.actualSong)
         if MainLayout.firstSong:
@@ -106,8 +118,6 @@ class MainLayout(GridLayout):
             time.sleep(2)
             audioPlayer.playSong(audioPlayer.actualSong)
             MainLayout.firstSong = False
-        isPlaying = True
-        #self.t.run()
 
     def pauseSong(self):
         isPlaying = False
@@ -116,16 +126,12 @@ class MainLayout(GridLayout):
         else:
             print("yay")
         print("thread is killed")
-
         audioPlayer.pauseSong()
 
     def kill_thread(self):
         print("killing")
         self.killThread = True
         print(self.killThread)
-        self.t = threading.Thread(target=self.timeUpdate)
-        self.t.start()
-
 
     def changeVolume(self, instance, volume):
         audioPlayer.changeVolume(int(volume))
@@ -137,11 +143,8 @@ class MainLayout(GridLayout):
         return audioPlayer.getTime()
 
     def searchSong(self):
-
         YoutubeAPI.searchQuery = self.ids.search_box.text
-
         videoResultsData = YoutubeAPI.getSongs()
-
         self.ids.results.clear_widgets()
         self.l = GridLayout()
         self.l.cols = 1
@@ -152,12 +155,50 @@ class MainLayout(GridLayout):
         #view results
         self.ids.results.add_widget(self.l)
 
+class LibraryScreen(Screen):
+    def __init__(self, **kwargs):
+        super(LibraryScreen, self).__init__(**kwargs)
+        self.rows = 1
+        self.actualSongImage = ""
+        Window.size = (800, 500)
+        self.ids.volume_control.bind(value=self.changeVolume)
+        self.ids.playback_control.value = 1
+        self.getPlaylists()
 
+    def getPlaylists(self):
+        l = playlistManager.getPlaylists()
+        for playlist in l:
+            aLayout = AnchorLayout(anchor_x = 'left', anchor_y = 'top', padding = 5)
+            aLayout.add_widget(Button(text = playlist, on_press = self.playPlaylist, size_hint = (.2, .2), size = (200, 200), spacing = 5))
+            self.ids.playlists.add_widget(aLayout)
 
+    def playPlaylist(self, instance):
+        pass
+
+    def playSong(self):
+        self.manager.get_screen('MainLayout').playSong()
+
+    def pauseSong(self):
+        self.manager.get_screen('MainLayout').pauseSong()
+
+    def changeVolume(self, instance, volume):
+        audioPlayer.changeVolume(int(volume))
+
+    def setTime(self, instance, time):
+        audioPlayer.setTime(int(time))
+
+    def getTime(self, instance):
+        return audioPlayer.getTime()
+        
 class MusicApp(App):
     def build(self):
-        self.mainLayout = MainLayout()
-        return self.mainLayout
+        sm = ScreenManager(transition = FadeTransition())
+        self.mainLayout = MainLayout(name = 'MainLayout')
+        sm.add_widget(self.mainLayout)
+        sm.add_widget(LibraryScreen(name = 'LibraryScreen'))
+        #sm.current = 'LibraryScreen'
+        sm.current = 'MainLayout'
+        return sm
 
     def stop(self, *largs):
         self.mainLayout.kill_thread()
