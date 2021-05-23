@@ -1,5 +1,6 @@
 import pafy
 import os
+
 directory = os.getcwd().__str__()
 #directory += '\VLC'
 #print(directory)
@@ -14,17 +15,12 @@ class AudioPlayer():
         best = self.video.getbestaudio()
         self.media = vlc.MediaPlayer(best.url)
         self.isPlaying = False
+        self.media.audio_set_volume(50)
 
     def playSong(self, songUrl):
-        print("ey")
         self.isPlaying = True
-        print("songURL-" + songUrl)
-        print("actualSong-" + self.actualSong)
         if songUrl != self.actualSong:
-
             self.actualSong = songUrl
-            print("songURL-" + songUrl)
-            print("actualSong-" + self.actualSong)
             self.media.stop()
             self.video = pafy.new(songUrl)
             # getting best audio stream
@@ -32,8 +28,9 @@ class AudioPlayer():
             self.media = vlc.MediaPlayer(best.url)
             self.media.play()
         else:
-            print("tu problem")
-        print(self.media.can_pause())
+            self.media.play()
+            if self.isPlaying == False:
+                self.media.play()
 
     def pauseSong(self):
         if self.isPlaying and self.media.can_pause():
@@ -42,3 +39,12 @@ class AudioPlayer():
 
     def changeVolume(self, value):
         self.media.audio_set_volume(value)
+
+    def setTime(self, time):
+        self.media.set_time(time)
+
+    def getTime(self):
+        return self.media.get_time()
+
+    def getLength(self):
+        return self.media.get_length()

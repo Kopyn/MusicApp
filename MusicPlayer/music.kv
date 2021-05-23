@@ -13,11 +13,12 @@
                 pos: self.pos
                 size: self.size
         Button:
-            text: 'Wyszukaj utwór'
+            text: 'Wyszukaj'
             size_hint: (1, .04)
             center_x: 1
             font_size: 14
         Button:
+            spacing: 10
             text: 'Biblioteka'
             size_hint: (1, .04)
             center_x: 1
@@ -79,25 +80,43 @@
                 Rectangle:
                     pos: self.pos
                     size: self.size
-            Button:
-                text: 'Poprzedni'
-                font_size: 14
-            Button:
-                text: 'Play'
-                font_size: 14
-                on_press: root.playSong()
-            Button:
-                text: 'Pause'
-                font_size: 14
-                on_press: root.pauseSong()
-            Button:
-                text: 'Nastepny'
-                font_size: 14
+            StackLayout:
+                size_hint: (.8, 1)
+                BoxLayout:
+                    size_hint: (1, .5)
+                    Button:
+                        text: 'Poprzedni'
+                        font_size: 14
+                    Button:
+                        text: 'Play'
+                        font_size: 14
+                        on_press: root.playSong()
+                    Button:
+                        text: 'Pause'
+                        font_size: 14
+                        on_press: root.pauseSong()
+                    Button:
+                        text: 'Nastepny'
+                        font_size: 14
+                ProgressBar:
+                    id: playback_control
+                    foreground_color: 1, 0, 0, 1
+                    min: 0
+                    value: 1
+                    max: 10000
+                    orientation: 'horizontal'
+                    size_hint: (1, .5)
             Slider:
                 id: volume_control
                 min: 0
                 max: 100
+                value: 50
+                value_track: True
+                value_track_color: 1, 0, 0, 1
+                cursor_size: 10, 10
+
                 step: 1
                 orientation: 'vertical'
+                size_hint: (.1, 1)
 
 
