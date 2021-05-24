@@ -1,12 +1,11 @@
 from kivy.app import App
-from kivy.metrics import cm
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.bubble import Bubble
 from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.image import Image, AsyncImage
+from kivy.uix.image import AsyncImage
 from kivy.core.window import Window
 from functools import *
 import threading
@@ -15,11 +14,15 @@ from PlaylistManager import *
 import YoutubeAPI
 from AudioPlayer import *
 from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
-
+from kivy.config import Config
 
 playlistManager = PlaylistManager()
 audioPlayer = AudioPlayer()
 isPlaying = False
+
+Window.size = (500, 400)
+Window.minimum_width = 580
+Window.minimum_height = 400
 
 actualSongTitle = ""
 
@@ -48,7 +51,6 @@ class VideoItem(BoxLayout):
         audioPlayer.playSong("https://www.youtube.com/watch?v=" + self.id)
         MainLayout.actualSongImage = self.actualSongImage
         if MainLayout.firstSong:
-            print("first song")
             audioPlayer.pauseSong()
             audioPlayer.playSong("https://www.youtube.com/watch?v=" + self.id)
             MainLayout.firstSong = False
@@ -78,7 +80,6 @@ class MainLayout(Screen):
         self.t = threading.Thread(target = self.timeUpdate)
         self.t.start()
         self.actualSongImage = ""
-        Window.size = (800, 500)
         self.ids.volume_control.bind(value = self.changeVolume)
         self.ids.playback_control.value = 1
 
@@ -86,7 +87,6 @@ class MainLayout(Screen):
         if not self.killThread:
             while MainLayout.firstSong:
                 time.sleep(0.5)
-                print("hey")
                 if self.killThread:
                     break
         self.pauseSong()
@@ -126,11 +126,6 @@ class MainLayout(Screen):
             MainLayout.firstSong = False
 
     def pauseSong(self):
-        if self.killThread:
-            self.killThread = True
-        else:
-            print("yay")
-        print("thread is killed")
         audioPlayer.pauseSong()
 
     def pickFromPlaylist(self,image, songID, instance):
@@ -140,7 +135,6 @@ class MainLayout(Screen):
         audioPlayer.playSong("https://www.youtube.com/watch?v=" + songID)
 
     def kill_thread(self):
-        print("killing")
         audioPlayer.changeVolume(0)
         self.killThread = True
         print(self.killThread)
@@ -194,7 +188,6 @@ class LibraryScreen(Screen):
         self.manager.get_screen('MainLayout').ids.playlist_name.text = playlistName
         playlist = playlistManager.readPlaylist(playlistName)
         for song in playlist:
-            print(song[0])
             self.ids.playlist_items.add_widget(Button(text=song[0], size_hint=(1, .07), font_size = '9sp', text_size = (self.ids.playlist_items.width, None),
                                                       halign = 'center', on_press = partial(self.pickFromPlaylist, song[1], song[2])))
             self.manager.get_screen('MainLayout').ids.playlist_items.add_widget(
