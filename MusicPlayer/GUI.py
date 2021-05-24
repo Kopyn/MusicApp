@@ -168,9 +168,12 @@ class LibraryScreen(Screen):
     def getPlaylists(self):
         l = playlistManager.getPlaylists()
         for playlist in l:
-            aLayout = AnchorLayout(anchor_x = 'left', anchor_y = 'top', padding = 5)
-            aLayout.add_widget(Button(text = playlist, on_press = self.playPlaylist, size_hint = (.2, .2), size = (200, 200), spacing = 5))
-            self.ids.playlists.add_widget(aLayout)
+            self.ids.playlists.add_widget(Button(text = playlist, on_press = self.playPlaylist, size_hint = (.2, .2), size = (200, 200)))
+
+    def addPlaylist(self):
+        playlistManager.addPlaylist(self.ids.playlist_name_box.text)
+        self.ids.playlists.clear_widgets()
+        self.getPlaylists()
 
     def playPlaylist(self, instance):
         pass

@@ -1,7 +1,7 @@
 
 <MainLayout>
     GridLayout:
-        cols: 2
+        cols: 3
         rows: 1
         #navigation panel
         size: (1200, 100)
@@ -68,7 +68,7 @@
                 id: results
                 canvas.before:
                     Color:
-                        rgba: 0, 0, 0, 0.9
+                        rgba: 12/255, 12/255, 12/255, 0.9
                     Rectangle:
                         pos: self.pos
                         size: self.size
@@ -121,10 +121,31 @@
                     step: 1
                     orientation: 'vertical'
                     size_hint: (.1, 1)
+        #actual playlist panel
+        StackLayout:
+            id: actual_playlist
+            size_hint: (.3, 1)
+            canvas.before:
+                Color:
+                    rgba: 180/255, 180/255, 180/255, 0.15
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            Label:
+                id: playlist_name
+                size_hint: (1, .1)
+                background_color: 1, 0, 0, 1
+                foreground_color: 1, 0, 0, 1
+                text: 'Playlist'
+                font_size: 20
+            StackLayout:
+                id: playlist_items
+                size_hint: (1, .9)
+
 
 <LibraryScreen>
     GridLayout:
-        cols: 2
+        cols: 3
         rows: 1
         #navigation panel
         size: (1200, 100)
@@ -176,7 +197,7 @@
                     hint_text: 'Wpisz nazwę playlisty'
                     cursor_color: 1, 1, 1, 1
                     foreground_color: 1, 1, 1, 1
-                    #on_text_validate: root.searchSong()
+                    on_text_validate: root.addPlaylist()
                 Button:
                     top: 1
                     pos_hint_y: root.y
@@ -185,14 +206,14 @@
                     size: (.3, .1)
                     center_x: 1
                     font_size: 14
-                    #on_press: root.searchSong()
+                    on_press: root.addPlaylist()
             #playlists panel
-            GridLayout:
+            StackLayout:
                 id: playlists
-                cols: 4
+                spacing: 4
                 canvas.before:
                     Color:
-                        rgba: 0, 0, 0, 0.9
+                        rgba: 12/255, 12/255, 12/255, 0.9
                     Rectangle:
                         pos: self.pos
                         size: self.size
@@ -245,3 +266,22 @@
                     step: 1
                     orientation: 'vertical'
                     size_hint: (.1, 1)
+        StackLayout:
+            id: actual_playlist
+            size_hint: (.3, 1)
+            canvas.before:
+                Color:
+                    rgba: 180/255, 180/255, 180/255, 0.15
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            Label:
+                id: playlist_name
+                size_hint: (1, .1)
+                background_color: 1, 0, 0, 1
+                foreground_color: 1, 0, 0, 1
+                text: 'Playlist'
+                font_size: 20
+            StackLayout:
+                id: playlist_items
+                size_hint: (1, .9)
