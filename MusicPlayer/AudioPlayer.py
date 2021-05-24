@@ -18,6 +18,8 @@ class AudioPlayer():
         self.media.audio_set_volume(50)
 
     def playSong(self, songUrl):
+        print("actual - " + self.actualSong)
+        print("coming-" + songUrl)
         self.isPlaying = True
         if songUrl != self.actualSong:
             self.actualSong = songUrl
@@ -48,3 +50,6 @@ class AudioPlayer():
 
     def getLength(self):
         return self.media.get_length()
+
+    def stopPlayer(self):
+        self.media.stop()
