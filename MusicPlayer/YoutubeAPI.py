@@ -3,28 +3,24 @@ import requests
 API_ENDPOINT = "https://www.googleapis.com/youtube/v3/search?part=snippet&key={}&type=video" \
              "&maxResults=3&q={}"
 
-API_KEY_1 = "AIzaSyAa6evu2V_0SjFCns0TWE_9-6frQvxw_JM"
-API_KEY_2 = "AIzaSyAF8nmidvvY1H6LjcRxqAiLiuhiTzYia5Y"
-
 searchQuery = ""
 
+#method to get list of 3 result songs
 def getSongs():
-    response = requests.get(API_ENDPOINT.format(API_KEY_1, searchQuery))
-    if 200 <= response.status_code <= 299:
-        returnedList = []
-        items = response.json()["items"]
+    keys = []
+    f = open("Keys.txt", "r", encoding='utf-8')
+    lines = f.readlines()
+    for line in lines:
+        if len(line) > 5:
+            keys.append(line.split()[0])
+    f.close()
+
+    if len(keys) > 0:
         i = 0
-        while i < 3:
-            #adding video image
-            returnedList.append(items[i]["snippet"]["thumbnails"]["high"]["url"])
-            #adding video title
-            returnedList.append(items[i]["snippet"]["title"])
-            #adding video id
-            returnedList.append(items[i]["id"]["videoId"])
+        response = requests.get(API_ENDPOINT.format(keys[0], searchQuery))
+        while i < len(keys) and response.status_code < 200 or response.status_code > 299:
             i += 1
-        return returnedList
-    else:
-        response = requests.get(API_ENDPOINT.format(API_KEY_2, searchQuery))
+            response = requests.get(API_ENDPOINT.format(keys[i], searchQuery))
         returnedList = []
         items = response.json()["items"]
         i = 0
@@ -37,3 +33,5 @@ def getSongs():
             returnedList.append(items[i]["id"]["videoId"])
             i += 1
         return returnedList
+    else:
+        return []

@@ -21,11 +21,6 @@ playlistManager = PlaylistManager()
 audioPlayer = AudioPlayer()
 isPlaying = False
 
-#seting minimal window size
-Window.size = (500, 400)
-Window.minimum_width = 580
-Window.minimum_height = 400
-
 actualSongTitle = ""
 
 #class representing search result
@@ -49,7 +44,7 @@ class VideoItem(BoxLayout):
         btn.bind(on_press = self.playSong)
         imag.add_widget(btn)
         imag.add_widget(img)
-        ttl.add_widget(Label(text = title, text_size = (200, None)))
+        ttl.add_widget(Label(bold = True, font_size = '22sp', text = title, text_size = (200, None)))
         #add all widgets
         self.add_widget(imag)
         self.add_widget(ttl)
@@ -60,6 +55,7 @@ class VideoItem(BoxLayout):
     def playSong(self, instance):
         audioPlayer.playSong("https://www.youtube.com/watch?v=" + self.id)
         MainLayout.actualSongImage = self.actualSongImage
+        MainLayout.actualSongLength = audioPlayer.getLength()
         #change flag if it's first song
         if MainLayout.firstSong:
             audioPlayer.pauseSong()
@@ -92,8 +88,10 @@ class VideoItem(BoxLayout):
 
 #class representing search panel
 class MainLayout(Screen):
+
     actualSongImage = ""
     firstSong = True
+    actualSongLength = 0
 
     def __init__(self, **kwargs):
         super(MainLayout, self).__init__(**kwargs)
@@ -127,6 +125,8 @@ class MainLayout(Screen):
                 if int(audioPlayer.getTime()) > 0:
                     self.updateProgress(audioPlayer.getTime())
                     self.manager.get_screen('LibraryScreen').ids.playback_control.value = audioPlayer.getTime()
+                self.ids.playback_control.max = audioPlayer.getLength()
+                self.manager.get_screen('LibraryScreen').ids.playback_control.max = audioPlayer.getLength()
                 self.ids.now_playing.add_widget(AsyncImage(source=MainLayout.actualSongImage))
                 self.manager.get_screen('LibraryScreen').ids.now_playing.add_widget(AsyncImage(source=MainLayout.actualSongImage))
             else:
@@ -189,13 +189,14 @@ class MainLayout(Screen):
         self.ids.results.clear_widgets()
         self.l = GridLayout()
         self.l.cols = 1
-        i = 0
-        #add all results to layout
-        while i < len(videoResultsData) - 2:
-            self.l.add_widget(VideoItem(videoResultsData[i], videoResultsData[i+1], videoResultsData[i+2]))
-            i += 3
-        #view results
-        self.ids.results.add_widget(self.l)
+        if len(videoResultsData) > 0:
+            # add all results to layout
+            i = 0
+            while i < len(videoResultsData) - 2:
+                self.l.add_widget(VideoItem(videoResultsData[i], videoResultsData[i + 1], videoResultsData[i + 2]))
+                i += 3
+            # view results
+            self.ids.results.add_widget(self.l)
 
     #play next playlist item
     def getNext(self):
@@ -218,6 +219,8 @@ class LibraryScreen(Screen):
         self.rows = 1
         self.actualSongImage = ""
         Window.size = (1000, 600)
+        Window.minimum_width = 580
+        Window.minimum_height = 400
         #binding volume change to slider
         self.ids.volume_control.bind(value=self.changeVolume)
         self.ids.playback_control.value = 1
@@ -245,10 +248,10 @@ class LibraryScreen(Screen):
         playlistManager.actualPlaylist = playlist
         #view all songs from playlist
         for song in playlist:
-            self.ids.playlist_items.add_widget(Button(background_color = (0, 0, 0, 0.3), text=song[0], size_hint=(1, .07), font_size = '9sp', text_size = (self.ids.playlist_items.width, None),
+            self.ids.playlist_items.add_widget(Button(bold = True, background_color = (0, 0, 0, 0.3), text=song[0], size_hint=(1, .07), font_size = '9sp', text_size = (self.ids.playlist_items.width, None),
                                                       halign = 'center', on_press = partial(self.pickFromPlaylist, song[1], song[2])))
             self.manager.get_screen('MainLayout').ids.playlist_items.add_widget(
-                Button(background_color = (0, 0, 0, 0.3), text=song[0], size_hint=(1, .07), font_size = '9sp', text_size = (self.ids.playlist_items.width, None),
+                Button(bold = True, background_color = (0, 0, 0, 0.3), text=song[0], size_hint=(1, .07), font_size = '9sp', text_size = (self.ids.playlist_items.width, None),
                        halign = 'center', on_press = partial(self.pickFromPlaylist, song[1], song[2])))
         #if playlist contains songs - play first song
         if len(playlist) > 0:
@@ -316,7 +319,3 @@ class MusicApp(App):
         self.mainLayout.kill_thread()
         time.sleep(0.3)
         super(MusicApp, self).stop(*largs)
-
-if __name__ == '__main__':
-    p = MusicApp()
-    p.run()

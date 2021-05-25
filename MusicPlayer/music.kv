@@ -19,6 +19,7 @@
                     size: self.size
             #search panel button
             Button:
+                bold: True
                 text: 'Wyszukaj'
                 size_hint: (1, .04)
                 center_x: 1
@@ -26,6 +27,7 @@
             #library panel button
             Button:
                 spacing: 10
+                bold: True
                 text: 'Biblioteka'
                 size_hint: (1, .04)
                 center_x: 1
@@ -64,6 +66,7 @@
                 Button:
                     top: 1
                     pos_hint_y: root.y
+                    bold: True
                     text: 'Szukaj'
                     size_hint: (.3, .1)
                     size: (.3, .1)
@@ -161,11 +164,12 @@
                     pos: self.pos
                     size: self.size
             Label:
+                bold: True
                 id: playlist_name
                 size_hint: (1, .1)
                 background_color: 1, 0, 0, 1
                 foreground_color: 1, 0, 0, 1
-                text: 'Playlist'
+                text: 'Playlista'
                 font_size: 20
             StackLayout:
                 id: playlist_items
@@ -190,12 +194,14 @@
                     pos: self.pos
                     size: self.size
             Button:
+                bold: True
                 text: 'Wyszukaj'
                 size_hint: (1, .04)
                 center_x: 1
                 font_size: 14
                 on_press: root.manager.current = 'MainLayout'
             Button:
+                bold: True
                 spacing: 10
                 text: 'Biblioteka'
                 size_hint: (1, .04)
@@ -230,6 +236,7 @@
                     foreground_color: 1, 1, 1, 1
                     on_text_validate: root.addPlaylist()
                 Button:
+                    bold: True
                     top: 1
                     pos_hint_y: root.y
                     text: 'Dodaj'
@@ -327,11 +334,12 @@
                     pos: self.pos
                     size: self.size
             Label:
+                bold: True
                 id: playlist_name
                 size_hint: (1, .1)
                 background_color: 1, 0, 0, 1
                 foreground_color: 1, 0, 0, 1
-                text: 'Playlist'
+                text: 'Playlista'
                 font_size: 20
             StackLayout:
                 id: playlist_items

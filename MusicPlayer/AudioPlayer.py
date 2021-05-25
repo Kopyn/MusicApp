@@ -1,10 +1,10 @@
 import pafy
 import os
 
-directory = os.getcwd().__str__()
+#directory = os.getcwd().__str__()
 #directory += '\VLC'
 #print(directory)
-#os.add_dll_directory(directory)
+os.add_dll_directory("C:\Program Files\VideoLAN\VLC")
 import vlc
 
 #class representing audio player
