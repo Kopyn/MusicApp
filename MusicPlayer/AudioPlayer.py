@@ -15,6 +15,7 @@ class AudioPlayer():
         best = self.video.getbestaudio()
         self.media = vlc.MediaPlayer(best.url)
         self.isPlaying = False
+        self.hasEnded = False
         self.media.audio_set_volume(50)
 
     def playSong(self, songUrl):

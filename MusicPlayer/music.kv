@@ -88,21 +88,41 @@
                 StackLayout:
                     size_hint: (.8, 1)
                     BoxLayout:
+                        spacing: 5
+                        padding: 10
                         size_hint: (1, .5)
-                        Button:
-                            text: 'Poprzedni'
-                            font_size: 14
-                        Button:
-                            text: 'Play'
-                            font_size: 14
-                            on_press: root.playSong()
-                        Button:
-                            text: 'Pause'
-                            font_size: 14
-                            on_press: root.pauseSong()
-                        Button:
-                            text: 'Nastepny'
-                            font_size: 14
+                        AnchorLayout:
+                            anchor_x: 'center'
+                            anchor_y: 'center'
+                            Button:
+                                on_press: root.getPrevious()
+                            Image:
+                                source: 'Images/previousButton.png'
+                                size_hint: 0.4, 0.4
+                        AnchorLayout:
+                            anchor_x: 'center'
+                            anchor_y: 'center'
+                            Button:
+                                on_press: root.playSong()
+                            Image:
+                                source: 'Images/playButton.png'
+                                size_hint: 0.4, 0.4
+                        AnchorLayout:
+                            anchor_x: 'center'
+                            anchor_y: 'center'
+                            Button:
+                                on_press: root.plauseSong()
+                            Image:
+                                source: 'Images/pauseButton.png'
+                                size_hint: 0.4, 0.4
+                        AnchorLayout:
+                            anchor_x: 'center'
+                            anchor_y: 'center'
+                            Button:
+                                on_press: root.getNext()
+                            Image:
+                                source: 'Images/nextButton.png'
+                                size_hint: 0.4, 0.4
                     ProgressBar:
                         id: playback_control
                         foreground_color: 1, 0, 0, 1
@@ -235,21 +255,41 @@
                 StackLayout:
                     size_hint: (.8, 1)
                     BoxLayout:
+                        spacing: 5
+                        padding: 10
                         size_hint: (1, .5)
-                        Button:
-                            text: 'Poprzedni'
-                            font_size: 14
-                        Button:
-                            text: 'Play'
-                            font_size: 14
-                            on_press: root.playSong()
-                        Button:
-                            text: 'Pause'
-                            font_size: 14
-                            on_press: root.pauseSong()
-                        Button:
-                            text: 'Nastepny'
-                            font_size: 14
+                        AnchorLayout:
+                            anchor_x: 'center'
+                            anchor_y: 'center'
+                            Button:
+                                on_press: root.getPrevious()
+                            Image:
+                                source: 'Images/previousButton.png'
+                                size_hint: 0.4, 0.4
+                        AnchorLayout:
+                            anchor_x: 'center'
+                            anchor_y: 'center'
+                            Button:
+                                on_press: root.playSong()
+                            Image:
+                                source: 'Images/playButton.png'
+                                size_hint: 0.4, 0.4
+                        AnchorLayout:
+                            anchor_x: 'center'
+                            anchor_y: 'center'
+                            Button:
+                                on_press: root.plauseSong()
+                            Image:
+                                source: 'Images/pauseButton.png'
+                                size_hint: 0.4, 0.4
+                        AnchorLayout:
+                            anchor_x: 'center'
+                            anchor_y: 'center'
+                            Button:
+                                on_press: root.getNext()
+                            Image:
+                                source: 'Images/nextButton.png'
+                                size_hint: 0.4, 0.4
                     ProgressBar:
                         id: playback_control
                         foreground_color: 1, 0, 0, 1

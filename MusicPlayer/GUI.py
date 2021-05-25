@@ -14,28 +14,35 @@ from PlaylistManager import *
 import YoutubeAPI
 from AudioPlayer import *
 from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
-from kivy.config import Config
 
+#create playlist manager object
 playlistManager = PlaylistManager()
+#create audio player object
 audioPlayer = AudioPlayer()
 isPlaying = False
 
+#seting minimal window size
 Window.size = (500, 400)
 Window.minimum_width = 580
 Window.minimum_height = 400
 
 actualSongTitle = ""
 
+#class representing search result
 class VideoItem(BoxLayout):
+
     def __init__(self, imageSource, title, videoID):
         super(VideoItem, self).__init__()
+        #store video data
         self.id = videoID
         self.title = title
-        self.orientation = 'horizontal'
         self.actualSongImage = imageSource
+        self.orientation = 'horizontal'
+        #place image and title on screen
         imag = AnchorLayout(anchor_x='center')
         ttl = AnchorLayout(anchor_x = 'right', anchor_y = 'bottom')
         toPlaylist = AnchorLayout(anchor_x='right', anchor_y='top', size_hint = (.1, .1))
+        #add button to add song to playlist
         toPlaylist.add_widget(Button(text = '+', on_press = self.showBuuble))
         img = AsyncImage(source = imageSource)
         btn = Button(background_color = (0, 0, 0, 0))
@@ -43,10 +50,13 @@ class VideoItem(BoxLayout):
         imag.add_widget(btn)
         imag.add_widget(img)
         ttl.add_widget(Label(text = title, text_size = (200, None)))
+        #add all widgets
         self.add_widget(imag)
         self.add_widget(ttl)
         self.add_widget(toPlaylist)
+        self.bubbleClicked = False
 
+    #method to play a result song
     def playSong(self, instance):
         audioPlayer.playSong("https://www.youtube.com/watch?v=" + self.id)
         MainLayout.actualSongImage = self.actualSongImage
@@ -55,19 +65,31 @@ class VideoItem(BoxLayout):
             audioPlayer.playSong("https://www.youtube.com/watch?v=" + self.id)
             MainLayout.firstSong = False
 
+    #method to add song to playlist
     def addToPlaylist(self, playlist, title, image, song, bubble, instance):
         playlistManager.addToPlaylist(playlist, title, image, song)
         self.remove_widget(bubble)
 
+    #method to show bubble with playlists
     def showBuuble(self, instance):
-        bubb = Bubble(orientation = 'horizontal', arrow_pos = 'bottom_mid')
+        #if bubble is already clicked
+        if self.bubbleClicked:
+            self.remove_widget(self.bubb)
+            self.bubbleClicked = False
+        #if bubble is not clicked
+        else:
+            self.bubb = Bubble(orientation='horizontal', arrow_pos='bottom_mid')
 
-        l = playlistManager.getPlaylists()
-        for playlist in l:
-            bubb.add_widget(Button(text = playlist, on_press = partial(self.addToPlaylist, playlist, self.title, self.actualSongImage, self.id, bubb),
-                                   size_hint = (.2, .2), size = (200, 200)))
-        self.add_widget(bubb)
+            l = playlistManager.getPlaylists()
+            for playlist in l:
+                self.bubb.add_widget(Button(text=playlist,
+                                       on_press=partial(self.addToPlaylist, playlist, self.title, self.actualSongImage,
+                                                        self.id, self.bubb),
+                                       size_hint=(.2, .2), size=(200, 200)))
+            self.add_widget(self.bubb)
+            self.bubbleClicked = True
 
+#class representing search panel
 class MainLayout(Screen):
     actualSongImage = ""
     firstSong = True
@@ -76,7 +98,6 @@ class MainLayout(Screen):
         super(MainLayout, self).__init__(**kwargs)
         self.rows = 1
         self.killThread = False
-        playlistManager.addPlaylist("Test")
         self.t = threading.Thread(target = self.timeUpdate)
         self.t.start()
         self.actualSongImage = ""
@@ -161,6 +182,15 @@ class MainLayout(Screen):
         #view results
         self.ids.results.add_widget(self.l)
 
+    def getNext(self):
+        next = playlistManager.getNext()
+        print(next)
+        self.manager.get_screen('LibraryScreen').pickFromPlaylist(next[1], next[2])
+
+    def getPrevious(self):
+        previous = playlistManager.getPrevious()
+        self.manager.get_screen('LibraryScreen').pickFromPlaylist(previous[1], previous[2])
+
 class LibraryScreen(Screen):
     def __init__(self, **kwargs):
         super(LibraryScreen, self).__init__(**kwargs)
@@ -187,17 +217,24 @@ class LibraryScreen(Screen):
         self.ids.playlist_name.text = playlistName
         self.manager.get_screen('MainLayout').ids.playlist_name.text = playlistName
         playlist = playlistManager.readPlaylist(playlistName)
+        playlistManager.actualPlaylist = playlist
         for song in playlist:
-            self.ids.playlist_items.add_widget(Button(text=song[0], size_hint=(1, .07), font_size = '9sp', text_size = (self.ids.playlist_items.width, None),
+            self.ids.playlist_items.add_widget(Button(background_color = (0, 0, 0, 0.3), text=song[0], size_hint=(1, .07), font_size = '9sp', text_size = (self.ids.playlist_items.width, None),
                                                       halign = 'center', on_press = partial(self.pickFromPlaylist, song[1], song[2])))
             self.manager.get_screen('MainLayout').ids.playlist_items.add_widget(
-                Button(text=song[0], size_hint=(1, .07), font_size = '9sp', text_size = (self.ids.playlist_items.width, None),
+                Button(background_color = (0, 0, 0, 0.3), text=song[0], size_hint=(1, .07), font_size = '9sp', text_size = (self.ids.playlist_items.width, None),
                        halign = 'center', on_press = partial(self.pickFromPlaylist, song[1], song[2])))
+        if len(playlist) > 0:
+            self.pickFromPlaylist(playlist[0][1], playlist[0][2])
 
     def playSong(self):
         self.manager.get_screen('MainLayout').playSong()
 
-    def pickFromPlaylist(self, image, songID, instance):
+    def updateImage(self, image):
+        self.actualSongImage = image
+        self.manager.get_screen('MainLayout').actualSongImage = image
+
+    def pickFromPlaylist(self, image, songID, instance = None):
         MainLayout.actualSongImage = image
         audioPlayer.stopPlayer()
         MainLayout.firstSong = False
@@ -214,17 +251,31 @@ class LibraryScreen(Screen):
 
     def getTime(self, instance):
         return audioPlayer.getTime()
+
+    def getNext(self):
+        next = playlistManager.getNext()
+        print(next)
+        self.manager.get_screen('LibraryScreen').pickFromPlaylist(next[1], next[2])
+
+    def getPrevious(self):
+        previous = playlistManager.getPrevious()
+        self.manager.get_screen('LibraryScreen').pickFromPlaylist(previous[1], previous[2])
         
 class MusicApp(App):
+
     def build(self):
+        #adding screen manager
         sm = ScreenManager(transition = FadeTransition())
+
         self.mainLayout = MainLayout(name = 'MainLayout')
         sm.add_widget(self.mainLayout)
         sm.add_widget(LibraryScreen(name = 'LibraryScreen'))
         sm.current = 'MainLayout'
         return sm
 
+    #method to stop the program work
     def stop(self, *largs):
+        #stop thread loop
         self.mainLayout.kill_thread()
         time.sleep(0.3)
         super(MusicApp, self).stop(*largs)

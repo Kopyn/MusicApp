@@ -7,6 +7,8 @@ class PlaylistManager():
         self.actualPlaylistFile = ""
         self.actualPlaylist = []
         self.isPlaying = False
+        self.skipped = False
+
 
     def addPlaylist(self, playlistName):
         filepath = "./Playlists/" + str(playlistName) + ".txt"
@@ -34,7 +36,32 @@ class PlaylistManager():
                 files.append(file.split(".")[0])
         return files
 
-    def playPlaylist(self, playlistName):
+    def getNext(self):
+        self.actualSongIndex += 1
+        self.indexFix()
+        return self.actualPlaylist[self.actualSongIndex]
+
+    def getPrevious(self):
+        self.actualSongIndex -= 1
+        self.indexFix()
+        return self.actualPlaylist[self.actualSongIndex]
+
+    def indexFix(self):
+        if self.actualSongIndex >= len(self.actualPlaylist):
+            self.actualSongIndex %= len(self.actualPlaylist)
+        if self.actualSongIndex < 0:
+            self.actualSongIndex = len(self.actualPlaylist) - 1
+
+
+    def playPlaylist(self, playlistName, audioPlayer, libraryScreen):
         self.actualPlaylist = self.readPlaylist(playlistName)
         while self.actualSongIndex < len(self.actualPlaylist):
-            pass
+            print(self.actualPlaylist[self.actualSongIndex])
+            audioPlayer.playSong("https://www.youtube.com/watch?v=" + self.actualPlaylist[self.actualSongIndex][2])
+            libraryScreen.updateImage(self.actualPlaylist[self.actualSongIndex][1])
+            while audioPlayer.isPlaying and not self.isPlaying:
+                if audioPlayer.getTime() == audioPlayer.getLength():
+                    audioPlayer.hasEnded = True
+                if audioPlayer.hasEnded:
+                    break
+            self.actualSongIndex += 1
