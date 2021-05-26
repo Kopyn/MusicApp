@@ -21,8 +21,6 @@ playlistManager = PlaylistManager()
 audioPlayer = AudioPlayer()
 isPlaying = False
 
-actualSongTitle = ""
-
 #class representing search result
 class VideoItem(BoxLayout):
 
