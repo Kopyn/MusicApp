@@ -1,2 +1,2 @@
 # MusicApp
-Music is an app to play music opnline
+Music is an app to play music online
