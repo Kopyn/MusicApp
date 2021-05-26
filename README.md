@@ -1,2 +1,2 @@
 # MusicApp
-2021_School_Project
+Music is an app to play music opnline
