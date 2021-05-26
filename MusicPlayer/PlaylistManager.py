@@ -58,17 +58,3 @@ class PlaylistManager():
             self.actualSongIndex %= len(self.actualPlaylist)
         if self.actualSongIndex < 0:
             self.actualSongIndex = len(self.actualPlaylist) - 1
-
-    #method to play whole playlist
-    def playPlaylist(self, playlistName, audioPlayer, libraryScreen):
-        self.actualPlaylist = self.readPlaylist(playlistName)
-        while self.actualSongIndex < len(self.actualPlaylist):
-            print(self.actualPlaylist[self.actualSongIndex])
-            audioPlayer.playSong("https://www.youtube.com/watch?v=" + self.actualPlaylist[self.actualSongIndex][2])
-            libraryScreen.updateImage(self.actualPlaylist[self.actualSongIndex][1])
-            while audioPlayer.isPlaying and not self.isPlaying:
-                if audioPlayer.getTime() == audioPlayer.getLength():
-                    audioPlayer.hasEnded = True
-                if audioPlayer.hasEnded:
-                    break
-            self.actualSongIndex += 1

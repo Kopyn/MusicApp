@@ -198,7 +198,6 @@ class MainLayout(Screen):
     def getNext(self):
         if len(playlistManager.actualPlaylist) > 0:
             next = playlistManager.getNext()
-            print(next)
             self.manager.get_screen('LibraryScreen').pickFromPlaylist(next[1], next[2])
 
     #play previous playlist item
@@ -284,7 +283,6 @@ class LibraryScreen(Screen):
     def getNext(self):
         if len(playlistManager.actualPlaylist) > 0:
             next = playlistManager.getNext()
-            print(next)
             self.manager.get_screen('LibraryScreen').pickFromPlaylist(next[1], next[2])
 
     #method to play previous song from playlist
