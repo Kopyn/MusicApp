@@ -5,10 +5,7 @@ class PlaylistManager():
     def __init__(self):
         self.actualSongIndex = 0
         self.allPlaylists = []
-        self.actualPlaylistFile = ""
         self.actualPlaylist = []
-        self.isPlaying = False
-        self.skipped = False
 
     #method to add new playlist
     def addPlaylist(self, playlistName):

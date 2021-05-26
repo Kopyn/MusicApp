@@ -19,7 +19,6 @@ from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
 playlistManager = PlaylistManager()
 #create audio player object
 audioPlayer = AudioPlayer()
-isPlaying = False
 
 #class representing search result
 class VideoItem(BoxLayout):
