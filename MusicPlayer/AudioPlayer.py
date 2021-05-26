@@ -1,9 +1,6 @@
 import pafy
 import os
 
-#directory = os.getcwd().__str__()
-#directory += '\VLC'
-#print(directory)
 os.add_dll_directory("C:\Program Files\VideoLAN\VLC")
 import vlc
 
@@ -46,9 +43,6 @@ class AudioPlayer():
     #method to change audio volume
     def changeVolume(self, value):
         self.media.audio_set_volume(value)
-
-    def setTime(self, time):
-        self.media.set_time(time)
 
     #method to get actual time
     def getTime(self):

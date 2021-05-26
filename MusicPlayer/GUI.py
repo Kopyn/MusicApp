@@ -173,10 +173,6 @@ class MainLayout(Screen):
     def changeVolume(self, instance, volume):
         audioPlayer.changeVolume(int(volume))
 
-
-    def setTime(self, instance, time):
-        audioPlayer.setTime(int(time))
-
     def getTime(self, instance):
         return audioPlayer.getTime()
 
@@ -280,9 +276,6 @@ class LibraryScreen(Screen):
     #method to change audio volume
     def changeVolume(self, instance, volume):
         audioPlayer.changeVolume(int(volume))
-
-    def setTime(self, instance, time):
-        audioPlayer.setTime(int(time))
 
     def getTime(self, instance):
         return audioPlayer.getTime()
